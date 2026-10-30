@@ -1,0 +1,14 @@
+#!/bin/bash
+# Print the USB map from the command line: usbmap [text|json|all]
+#   text  the map (unused ports left out)
+#   all   the map with every port
+#   json  the same data the page uses
+fmt=${1:-text}
+case "$fmt" in
+  text|json|all) ;;
+  *) echo "usage: usbmap [text|json|all]" >&2; exit 2 ;;
+esac
+LIB=${USBMAP_LIB:-/usr/local/emhttp/plugins/UsbMap/include/usbmap-lib.php}
+# PHP code, not shell: $argv is expanded by PHP.
+# shellcheck disable=SC2016
+exec php -r 'require $argv[1]; $s = new UsbMapSysfs(); if ($argv[2] === "json") { echo usbmap_export($s, "json"); } else { echo usbmap_text(usbmap_collect($s), $argv[2] === "all"); }' "$LIB" "$fmt"

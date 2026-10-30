@@ -1,0 +1,86 @@
+Menu="UNRAID-OS"
+Title="USB Map"
+Icon="usb"
+Tag="usb"
+Markdown="false"
+---
+<?php
+$usbmap_docroot = $docroot ?? '/usr/local/emhttp';
+require_once "$usbmap_docroot/plugins/UsbMap/include/usbmap-lib.php";
+$usbmap = usbmap_collect(new UsbMapSysfs());
+$usbmap_status = [
+    'safe' => ['usbmap-ok', 'Safe'],
+    'shared' => ['usbmap-warn', 'Shares group'],
+    'boot' => ['usbmap-bad', 'Boot device'],
+    'nogroup' => ['usbmap-dim', 'No IOMMU group'],
+];
+?>
+<link type="text/css" rel="stylesheet" href="<?php autov('/plugins/UsbMap/usbmap.css') ?>">
+<div id="usbmap">
+<?php if (!$usbmap['iommu']): ?>
+<p class="usbmap-warn">IOMMU is off or not supported, so no controller can be passed through. Turn on IOMMU (AMD-Vi / VT-d) in the BIOS.</p>
+<?php endif; ?>
+<?php if ($usbmap['names_error'] !== ''): ?>
+<p class="usbmap-bad"><?= htmlspecialchars($usbmap['names_error']) ?></p>
+<?php endif; ?>
+<dl>
+  <dt>Boot device:</dt>
+  <dd id="usbmap-boot"><?= htmlspecialchars($usbmap['boot']['text']) ?></dd>
+</dl>
+<blockquote class="inline_help">
+  The controller that holds the Unraid boot device is marked and must stay with Unraid.
+</blockquote>
+<div class="usbmap-bar">
+  <input type="button" id="usbmap-identify" value="Identify port">
+  <input type="button" id="usbmap-refresh" value="Refresh">
+  <label><input type="checkbox" id="usbmap-unused"> Show unused ports</label>
+  <input type="button" id="usbmap-export-text" value="Export text">
+  <input type="button" id="usbmap-export-json" value="Export JSON">
+  <span id="usbmap-msg" role="status"></span>
+</div>
+<blockquote class="inline_help">
+  Identify port: plug a device into the port you want to name. Its port is highlighted and the name field opens. Click any port to name it. Names are kept in /boot/config/plugins/usbmap/ports.json.
+</blockquote>
+<div id="usbmap-edit" hidden>
+  <span id="usbmap-edit-port"></span>
+  <input type="text" id="usbmap-edit-name" maxlength="64" autocomplete="off" placeholder="Rear I/O top-left USB-C">
+  <input type="button" id="usbmap-edit-save" value="Save">
+  <input type="button" id="usbmap-edit-clear" value="Clear">
+  <input type="button" id="usbmap-edit-cancel" value="Cancel">
+</div>
+<div id="usbmap-legend">
+  <span class="usbmap-key usbmap-key-ok">Safe to pass through</span>
+  <span class="usbmap-key usbmap-key-warn">Shares IOMMU group</span>
+  <span class="usbmap-key usbmap-key-bad">Boot device</span>
+  <span class="usbmap-key usbmap-key-info">vfio-pci</span>
+  <span class="usbmap-key usbmap-key-slow">Slower than it could run</span>
+</div>
+<div id="usbmap-wrap"><noscript>The diagram needs JavaScript. The table below lists the controllers.</noscript></div>
+<div id="usbmap-stale" hidden></div>
+<table class="usbmap-table">
+  <thead>
+    <tr><th>Controller</th><th>Name</th><th>Type</th><th>IOMMU group</th><th>Passthrough</th><th>Driver</th></tr>
+  </thead>
+  <tbody>
+<?php foreach ($usbmap['controllers'] as $c):
+    $st = $usbmap_status[$c['status']] ?? ['', ''];
+?>
+    <tr>
+      <td><?= htmlspecialchars($c['bdf'] !== '' ? $c['bdf'] : $c['key']) ?></td>
+      <td><?= htmlspecialchars($c['name']) ?></td>
+      <td><?= htmlspecialchars($c['kind']) ?></td>
+      <td><?= htmlspecialchars($c['group'] === null ? '-' : (string)$c['group']) ?></td>
+      <td class="<?= $st[0] ?>"><?= htmlspecialchars($c['safety_text']) ?></td>
+      <td><?= htmlspecialchars(($c['driver'] !== '' ? $c['driver'] : 'none') . ($c['vfio']['cfg'] ? ' (vfio-pci.cfg)' : '')) ?></td>
+    </tr>
+<?php endforeach; ?>
+  </tbody>
+</table>
+<blockquote class="inline_help">
+  Safe: the IOMMU group holds only this controller, its own USB functions, or bridges. Bind it in Tools &rarr; System Devices.
+</blockquote>
+</div>
+<script>
+var usbmapInitial = <?= usbmap_json_script($usbmap) ?>;
+</script>
+<script src="<?php autov('/plugins/UsbMap/usbmap.js') ?>"></script>

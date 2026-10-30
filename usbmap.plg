@@ -1,0 +1,84 @@
+<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE PLUGIN [
+<!ENTITY name "UsbMap">
+<!ENTITY author "RifleJock">
+<!ENTITY version "2026.10.30aa">
+<!ENTITY launch "Tools/UsbMap">
+<!ENTITY pluginURL "https://raw.githubusercontent.com/ibigsnet/UsbMap/testing/usbmap.plg">
+<!ENTITY github "ibigsnet/UsbMap">
+<!ENTITY raw "https://raw.githubusercontent.com/ibigsnet/UsbMap/testing">
+<!ENTITY plugdir "/usr/local/emhttp/plugins/UsbMap">
+<!ENTITY configdir "/boot/config/plugins/usbmap">
+]>
+
+<PLUGIN name="&name;"
+  author="&author;"
+  version="&version;"
+  launch="&launch;"
+  pluginURL="&pluginURL;"
+  icon="usb"
+  min="7.0.0"
+  support="https://github.com/ibigsnet/UsbMap/issues"
+  project="https://github.com/&github;"
+  readme="https://raw.githubusercontent.com/&github;/testing/README.md">
+
+<CHANGES>
+###&version;
+- First release. Tools, USB Map draws each USB controller with its IOMMU group, ports, hubs and devices, marks the controller that holds the boot device, and flags devices running slower than their port allows.
+- Name physical ports by plugging a device in. Export the map as text or JSON.
+
+### Older releases
+- Full changelog: https://github.com/ibigsnet/UsbMap/blob/main/CHANGELOG.md
+</CHANGES>
+
+<!-- raw-files begin -->
+<FILE Name="&configdir;/UsbMap-&version;-x86_64-1.txz" Run="upgradepkg --install-new --reinstall">
+<URL>https://github.com/ibigsnet/UsbMap/releases/download/v&version;/UsbMap-&version;-x86_64-1.txz</URL>
+<SHA256>0000000000000000000000000000000000000000000000000000000000000000</SHA256>
+<MD5>00000000000000000000000000000000</MD5>
+</FILE>
+<!-- raw-files end -->
+
+<FILE Run="/bin/bash">
+<INLINE><![CDATA[
+echo "UsbMap: finishing install..."
+mkdir -p /boot/config/plugins/usbmap
+if [ ! -f /usr/local/emhttp/plugins/UsbMap/include/usbmap-lib.php ]; then
+  echo "UsbMap: ERROR - package did not install (missing usbmap-lib.php)"
+  exit 1
+fi
+chmod 0755 /usr/local/emhttp/plugins/UsbMap/scripts/* 2>/dev/null || true
+# Keep only this version's package on the flash.
+VER=""
+for candidate in /tmp/plugins/usbmap.plg /boot/config/plugins/usbmap.plg; do
+  if [ -f "$candidate" ]; then
+    VER=$(sed -n 's/.*ENTITY version "\([^"]*\)".*/\1/p' "$candidate" | head -1)
+    [ -n "$VER" ] && break
+  fi
+done
+if [ -n "$VER" ]; then
+  find /boot/config/plugins/usbmap -maxdepth 1 -name 'UsbMap-*-x86_64-1.txz' ! -name "UsbMap-${VER}-x86_64-1.txz" -delete 2>/dev/null || true
+fi
+echo "UsbMap: ready. Open Tools, USB Map."
+]]></INLINE>
+</FILE>
+
+<FILE Run="/bin/bash" Method="remove">
+<INLINE><![CDATA[
+#!/bin/bash
+set +e
+echo "UsbMap: removing..."
+for p in /var/log/packages/UsbMap-*; do
+  [ -e "$p" ] || continue
+  removepkg "$(basename "$p")" >/dev/null 2>&1
+done
+rm -rf /usr/local/emhttp/plugins/UsbMap
+if [ -f /boot/config/plugins/usbmap/ports.json ]; then
+  echo "UsbMap: port names kept in /boot/config/plugins/usbmap/ports.json"
+fi
+echo "UsbMap: removed."
+exit 0
+]]></INLINE>
+</FILE>
+
+</PLUGIN>

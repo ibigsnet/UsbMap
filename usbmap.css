@@ -1,0 +1,139 @@
+/* USB Map. Colors follow the page text (currentColor) so light and dark themes both work. */
+#usbmap {
+  --usbmap-ok: #34a853;
+  --usbmap-warn: #d68a00;
+  --usbmap-bad: #e04848;
+  --usbmap-info: #3d8bfd;
+}
+
+#usbmap .usbmap-ok { color: var(--usbmap-ok); }
+#usbmap .usbmap-warn { color: var(--usbmap-warn); }
+#usbmap .usbmap-bad { color: var(--usbmap-bad); }
+#usbmap .usbmap-dim { opacity: 0.7; }
+
+.usbmap-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 8px 0;
+}
+
+.usbmap-bar input[type="button"] { margin: 0; }
+
+#usbmap-msg { opacity: 0.85; }
+
+#usbmap-edit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 8px 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(128, 128, 128, 0.45);
+  border-left: 4px solid var(--usbmap-info);
+}
+
+#usbmap-edit[hidden] { display: none; }
+
+#usbmap-edit-name { width: 24em; max-width: 100%; margin: 0; }
+
+#usbmap-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 6px 0;
+  font-size: 0.92em;
+}
+
+.usbmap-key::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  border-radius: 2px;
+  vertical-align: -1px;
+}
+
+.usbmap-key-ok::before { background: var(--usbmap-ok); }
+.usbmap-key-warn::before { background: var(--usbmap-warn); }
+.usbmap-key-bad::before { background: var(--usbmap-bad); }
+.usbmap-key-info::before { background: var(--usbmap-info); }
+.usbmap-key-slow::before { background: transparent; border: 2px solid var(--usbmap-warn); width: 6px; height: 6px; }
+
+#usbmap-wrap {
+  overflow: auto;
+  max-width: 100%;
+  margin: 6px 0 12px;
+  padding: 6px;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+}
+
+.usbmap-svg {
+  display: block;
+  color: inherit;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.usbmap-svg text { fill: currentColor; font-size: 12px; }
+.usbmap-svg text.um-t { font-weight: bold; }
+.usbmap-svg text.um-d { fill-opacity: 0.68; }
+.usbmap-svg text.um-ok { fill: var(--usbmap-ok); }
+.usbmap-svg text.um-warn { fill: var(--usbmap-warn); }
+.usbmap-svg text.um-bad { fill: var(--usbmap-bad); font-weight: bold; }
+.usbmap-svg text.um-info { fill: var(--usbmap-info); }
+
+.usbmap-svg .um-box {
+  fill: currentColor;
+  fill-opacity: 0.05;
+  stroke: currentColor;
+  stroke-opacity: 0.35;
+}
+
+.usbmap-svg .um-root .um-box { fill-opacity: 0.1; }
+.usbmap-svg .um-ctrl .um-box { fill-opacity: 0.08; stroke-opacity: 0.5; }
+.usbmap-svg .um-note .um-box { stroke-dasharray: 4 3; }
+
+.usbmap-svg .um-edge {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.4;
+  stroke-width: 1.2;
+}
+
+.usbmap-svg .um-accent { stroke: none; fill: currentColor; fill-opacity: 0.4; }
+.usbmap-svg .um-s-ok .um-accent { fill: var(--usbmap-ok); fill-opacity: 1; }
+.usbmap-svg .um-s-warn .um-accent { fill: var(--usbmap-warn); fill-opacity: 1; }
+.usbmap-svg .um-s-bad .um-accent { fill: var(--usbmap-bad); fill-opacity: 1; }
+.usbmap-svg .um-s-info .um-accent { fill: var(--usbmap-info); fill-opacity: 1; }
+.usbmap-svg .um-s-slow .um-accent { fill: var(--usbmap-warn); fill-opacity: 1; }
+.usbmap-svg .um-s-slow .um-box { stroke: var(--usbmap-warn); stroke-opacity: 0.9; }
+.usbmap-svg .um-s-bad .um-box { stroke: var(--usbmap-bad); stroke-opacity: 0.9; }
+
+.usbmap-svg .um-slot { cursor: pointer; }
+.usbmap-svg .um-slot:hover .um-box,
+.usbmap-svg .um-slot:focus .um-box { stroke-opacity: 0.9; fill-opacity: 0.1; }
+.usbmap-svg .um-slot:focus { outline: none; }
+.usbmap-svg .um-unused { opacity: 0.5; }
+
+.usbmap-svg .um-s-hl .um-box {
+  stroke: var(--usbmap-info);
+  stroke-opacity: 1;
+  stroke-width: 3;
+  animation: usbmap-pulse 1.2s ease-in-out 3;
+}
+
+.usbmap-svg .um-s-hl .um-accent { fill: var(--usbmap-info); fill-opacity: 1; }
+
+@keyframes usbmap-pulse {
+  50% { stroke-width: 1; }
+}
+
+#usbmap-stale { margin: 0 0 12px; }
+#usbmap-stale[hidden] { display: none; }
+#usbmap-stale div { margin: 3px 0; }
+
+.usbmap-table { width: 100%; margin: 4px 0 10px; border-collapse: collapse; }
+.usbmap-table th, .usbmap-table td { text-align: left; padding: 3px 8px 3px 0; vertical-align: top; }
