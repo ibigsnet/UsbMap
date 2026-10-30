@@ -34,8 +34,8 @@
 <!-- raw-files begin -->
 <FILE Name="&configdir;/UsbMap-&version;-x86_64-1.txz" Run="upgradepkg --install-new --reinstall">
 <URL>https://github.com/ibigsnet/UsbMap/releases/download/v&version;/UsbMap-&version;-x86_64-1.txz</URL>
-<SHA256>0000000000000000000000000000000000000000000000000000000000000000</SHA256>
-<MD5>00000000000000000000000000000000</MD5>
+<SHA256>3a484167eeec192e493d7a8cf57d52a119dbb98e0f01840bde0f97451dca33d3</SHA256>
+<MD5>4a7647c64ed0885ee30884c8b900e27d</MD5>
 </FILE>
 <!-- raw-files end -->
 
