@@ -4,9 +4,9 @@
 <!ENTITY author "RifleJock">
 <!ENTITY version "2026.10.30aa">
 <!ENTITY launch "Tools/UsbMap">
-<!ENTITY pluginURL "https://raw.githubusercontent.com/ibigsnet/UsbMap/testing/usbmap.plg">
+<!ENTITY pluginURL "https://raw.githubusercontent.com/ibigsnet/UsbMap/main/usbmap.plg">
 <!ENTITY github "ibigsnet/UsbMap">
-<!ENTITY raw "https://raw.githubusercontent.com/ibigsnet/UsbMap/testing">
+<!ENTITY raw "https://raw.githubusercontent.com/ibigsnet/UsbMap/main">
 <!ENTITY plugdir "/usr/local/emhttp/plugins/UsbMap">
 <!ENTITY configdir "/boot/config/plugins/usbmap">
 ]>
@@ -20,7 +20,7 @@
   min="7.0.0"
   support="https://github.com/ibigsnet/UsbMap/issues"
   project="https://github.com/&github;"
-  readme="https://raw.githubusercontent.com/&github;/testing/README.md">
+  readme="https://raw.githubusercontent.com/&github;/main/README.md">
 
 <CHANGES>
 ###&version;
